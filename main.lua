@@ -148,6 +148,10 @@ function love.update(dt)
         return
     end
 
+    if gamePlay.lose then
+	    return
+    end
+
     world.map:update(dt)
     world.secondsElapsedInDay = world.secondsElapsedInDay + dt
 
@@ -242,6 +246,12 @@ function love.draw(dt)
     if onMenu then
         mainMenu:draw(dt)
         return;
+    elseif gamePlay.lose then
+	Font = love.graphics.newFont(40)
+	love.graphics.setColor(255, 0, 0, 122)
+	love.graphics.setFont(Font)
+	love.graphics.print("Game Over", 250, 200)
+	return
     end
 
     -- Translate the camera to be centered on the player
