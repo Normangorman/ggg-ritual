@@ -15,12 +15,12 @@ function WaterDemon.new()
     f.speed_stat = 4
     f.ai_state = "idle"
 
-    f.animations.idle = Animation.newFromFile("Animations/_NPCS/Nymph/nymph_up.lua")
-    f.animations.chasing = Animation.newFromFile("Animations/_NPCS/Nymph/nymph_down.lua")
-    f.animations.hitting = Animation.newFromFile("Animations/_NPCS/Nymph/nymph_attack.lua")
-    f.animations.nearby = Animation.newFromFile("Animations/_NPCS/Nymph/nymph_down.lua")
-    f.animations.hurt = Animation.newFromFile("Animations/_NPCS/Nymph/nymph_damage.lua")
-    f.animations.dying = Animation.newFromFile("Animations/_NPCS/Nymph/nymph_dying.lua")
+    f.animations.idle = Animation.newFromFile("Animations/_NPCS/Water_Demon/Water_Demon_Back.lua")
+    f.animations.chasing = Animation.newFromFile("Animations/_NPCS/Water_Demon/Water_Demon_Move.lua")
+    f.animations.hitting = Animation.newFromFile("Animations/_NPCS/Water_Demon/Water_Demon_Attack.lua")
+    f.animations.nearby = Animation.newFromFile("Animations/_NPCS/Water_Demon/Water_Demon_Move.lua")
+    f.animations.hurt = Animation.newFromFile("Animations/_NPCS/Water_Demon/Water_Demon_Damage.lua")
+    f.animations.dying = Animation.newFromFile("Animations/_NPCS/Water_Demon/Water_Demon_Death.lua")
     f.current_animation = f.animations.idle
 
     f.sounds = {}
