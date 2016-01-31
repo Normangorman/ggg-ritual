@@ -65,8 +65,8 @@ end
 
 
 function MainMenu:draw(dt)
-    if self.menu then
-
+    if self.splashScreen then
+        love.graphics.draw(self.splashScreenImg, 0, 0)
     end
     currentDrawPosition = paddingStart
     love.graphics.draw(self.menuBackground, 0, 0)

@@ -12,6 +12,7 @@ require "mainMenu"
 require "healthBar"
 require "SoundManager"
 require "gamePlay"
+require "villager"
 
 ENTITY_SPEED_MULTIPLIER = 12 -- multiplied by an entity's speed_stat to get it's real speed in pixels
 SCREEN_WIDTH = 790
@@ -65,8 +66,8 @@ function love.load()
     elder = Elder.new()
     sideBar = SideBar.new()
     --Delete later
-    mainMenu = MainMenu.new()
     healthBar = HealthBar.new()
+    mainMenu = MainMenu.new()
 
 
     world.map = sti.new("Assets/_Map/MAP.lua")
