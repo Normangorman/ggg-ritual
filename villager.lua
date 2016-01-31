@@ -1,45 +1,28 @@
 Villager = {}
-setmetatable(Villager, Enemy)
+setmetatable(Villager, GameObject)
 Villager.__index = Villager
 
 function Villager.new()
-    local n = Enemy.new()
+    local n = GameObject.new()
     setmetatable(n, Villager)
 
     n.x = 0
     n.y = 0
     n.vx = 0
     n.vy = 0
-    n.hp_stat = 2
-    n.damage_stat = 1
-    n.speed_stat = 5
     n.ai_state = "idle"
 
-    n.animations.idle = Animation.newFromFile("Animations/_NPCS/Villager/villager_up.lua")
-    n.animations.chasing = Animation.newFromFile("Animations/_NPCS/Villager/villager_down.lua")
-    n.animations.hitting = Animation.newFromFile("Animations/_NPCS/Villager/villager_attack.lua")
-    n.animations.nearby = Animation.newFromFile("Animations/_NPCS/Villager/villager_down.lua")
-    n.animations.hurt = Animation.newFromFile("Animations/_NPCS/Villager/villager_damage.lua")
-    n.animations.dying = Animation.newFromFile("Animations/_NPCS/Villager/villager_dying.lua")
+    n.animations.idle = Animation.newFromFile("Animations/_NPCS/Villager/villager_down.lua")
     n.current_animation = n.animations.idle
-
-    n.sounds = {}
-    n.sounds["walking"] = nil
-    n.sounds["hitting"] = nil
-    n.sounds["hurt"] = nil
-    n.sounds["dying"] = nil
-
-    n.sounds["walking"]:setLooping(true)
-
-    n.frames_waiting = -1  -- used for waiting to perform actions
+    n.current_animation.play()
 
     return n
 end
 
-function Villager:get_pursuit_range()
-    return 400
+function Villager:update(dt)
+    self.current_animation:update(dt)
 end
 
-function Villager:get_nearby_range()
-    return 25
+function Villager:draw()
+    self.current_animation:draw(self.x, self.y)
 end
