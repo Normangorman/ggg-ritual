@@ -1,7 +1,7 @@
 MainMenu = {}
 MainMenu.__index = MainMenu
 
-local paddingStart = 50
+local paddingStart = 260
 local buttonPadding = 10
 local numberOfButtons = 2
 local buttonWidth = 200
@@ -22,7 +22,7 @@ local buttonActions = {
             end)
         end)
     end,
-    function () love.quit() end
+    function () love.event.quit() end
 }
 
 function isCoordInRect(x, y, rectX, rectY, widthX, widthY)
@@ -65,8 +65,11 @@ end
 
 
 function MainMenu:draw(dt)
-    currentDrawPosition = 260
-
+    if self.splashScreen then
+        love.graphics.draw(self.splashScreenImg, 0, 0)
+        return
+    end
+    currentDrawPosition = paddingStart
     love.graphics.draw(self.menuBackground, 0, 0)
     for i=1, #self.buttons do
         local drawingImg = nil;

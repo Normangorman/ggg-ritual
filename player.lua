@@ -36,6 +36,8 @@ function Player.new()
     p.ai_state = "idle"   --can be idle, walking, hitting, hurt, jumping or dying
     p.direction = "down"  --can be up, down, left or right
 
+    p.dead = false
+
     p.sounds = {}
     p.sounds["walking"] = nil
     p.sounds["hitting"] = love.audio.newSource("Assets/_Sounds/scythe/hitenemy1.wav", "static")

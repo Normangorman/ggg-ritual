@@ -36,6 +36,7 @@ function Enemy.new()
 
     e.frames_waiting = -1  -- used for waiting to perform actions
 
+
     return e
 end
 
@@ -48,6 +49,7 @@ function Enemy:update(dt)
     if self.current_animation then
         self.current_animation:update(dt)
     end
+
 
     if self.frames_waiting > 0 then
         self.frames_waiting = self.frames_waiting - 1
@@ -141,6 +143,10 @@ function Enemy:update_AI()
 	 end
 	 -- if animation has finished
 	 if not self.current_animation.playing then
+		 player.health = player.health - self.damage_stat
+	 	 if player.health <= 0 then
+		     player.dead = true
+		 end
 		 self:set_ai("nearby")
 	 end
          -- if player is colliding with enemy, will set them to hurt state
@@ -197,11 +203,14 @@ end
 
 function Enemy:pursue_player()
     -- Calculate direction to move
+    
     dx = player.x - self.x
     dy = player.y - self.y
 
+
     direction = math.atan2(dy, dx)
     speed = self.speed_stat * ENTITY_SPEED_MULTIPLIER
+
 
     self.vx = speed * math.cos(direction)
     self.vy = speed * math.sin(direction)

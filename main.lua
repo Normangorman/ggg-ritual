@@ -10,8 +10,13 @@ require "enemy"
 require "nymph"
 require "mainMenu"
 require "healthBar"
+require "forest_demon"
+require "water_demon"
+require "rock_bat"
+require "ghost"
 require "SoundManager"
 require "gamePlay"
+require "villager"
 require "forest_demon"
 require "villager"
 
@@ -92,7 +97,10 @@ function world:load()
     player = Player.new()
     elder = Elder.new()
     sideBar = SideBar.new()
+
+    --Delete later
     healthBar = HealthBar.new()
+    mainMenu = MainMenu.new()
 
     world.map = sti.new("Assets/_Map/MAP.lua")
     world.camera_x = math.floor(player.x - love.graphics.getWidth() / 2)
@@ -131,10 +139,18 @@ function love.load()
     mainMenu = MainMenu.new()
 end
 
+function love.quit()
+    return false
+end
+
 function love.update(dt)
     if onMenu then
         mainMenu:update(dt)
         return
+    end
+
+    if gamePlay.lose then
+	    return
     end
 
     world.map:update(dt)
@@ -199,6 +215,10 @@ function love.update(dt)
         player:idle()
     end
 
+    if player.health <= 0 then
+	gamePlay:death()
+    end
+
     for i=1, #world.objects do
         local obj = world.objects[i]
 
@@ -222,7 +242,7 @@ function love.update(dt)
         else
             -- Don't worry about collisions, just move it move it
             obj.x = obj.x + obj.vx * dt
-            obj.x = obj.x + obj.vy * dt
+            obj.y = obj.y + obj.vy * dt
         end
     end
 
@@ -275,6 +295,12 @@ function love.draw(dt)
     if onMenu then
         mainMenu:draw(dt)
         return;
+    elseif gamePlay.lose then
+	Font = love.graphics.newFont(40)
+	love.graphics.setColor(255, 0, 0, 122)
+	love.graphics.setFont(Font)
+	love.graphics.print("Game Over", 250, 200)
+	return
     end
 
     -- Translate the camera to be centered on the player
