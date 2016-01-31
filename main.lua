@@ -92,6 +92,7 @@ function world:load()
     player = Player.new()
     elder = Elder.new()
     sideBar = SideBar.new()
+
     --Delete later
     healthBar = HealthBar.new()
     mainMenu = MainMenu.new()
@@ -131,6 +132,10 @@ end
 function love.load()
     onMenu = true
     mainMenu = MainMenu.new()
+end
+
+function love.quit()
+    return false
 end
 
 function love.update(dt)

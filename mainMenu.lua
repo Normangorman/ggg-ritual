@@ -22,7 +22,7 @@ local buttonActions = {
             end)
         end)
     end,
-    function () love.quit() end
+    function () love.event.quit() end
 }
 
 function isCoordInRect(x, y, rectX, rectY, widthX, widthY)
@@ -67,6 +67,7 @@ end
 function MainMenu:draw(dt)
     if self.splashScreen then
         love.graphics.draw(self.splashScreenImg, 0, 0)
+        return
     end
     currentDrawPosition = paddingStart
     love.graphics.draw(self.menuBackground, 0, 0)

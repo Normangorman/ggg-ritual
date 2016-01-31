@@ -69,6 +69,8 @@ function GamePlay.new()
 
     gamePlay.secondsElapsedInDay = 0
     gamePlay.day = 1
+    gamePlay.lose = false
+    --gamePlay.numberOfTasks = #GamePlay.tasksByDay[self.day]
 
     return gamePlay
 end
@@ -78,15 +80,18 @@ function GamePlay:getTaskTextAtIndex(i)
 end
 
 function GamePlay:getNumberOfTasks()
+    print(#GamePlay.tasksByDay[self.day])
     return #GamePlay.tasksByDay[self.day]
 end
 
 function GamePlay:getTilesForTask(taskI)
+    print(self.day, taskI, GamePlay.tasksByDay[self.day][taskI])
     return GamePlay.tasksByDay[self.day][taskI][2]
 end
 
 function GamePlay:death()
     print("Death")
+    gamePlay.lose = true
 end
 
 function GamePlay:win()
@@ -105,8 +110,10 @@ end
 
 function GamePlay:completeTask(taskI)
     --Play animation then
+    print("complete task")
     table.remove(GamePlay.tasksByDay[self.day], taskI)
     if #GamePlay.tasksByDay[self.day] == 0 then
+        print("Complete day")
         self:completeDay()
     end
 end
@@ -120,6 +127,7 @@ function GamePlay:update(dt)
         for i=1,#tilesPos do
             if sX == tilesPos[i][1] and sY == tilesPos[i][2] then
                 self:completeTask(taskI)
+                return
             end
         end
     end
