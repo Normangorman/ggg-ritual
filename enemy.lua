@@ -36,7 +36,6 @@ function Enemy.new()
 
     e.frames_waiting = -1  -- used for waiting to perform actions
 
-
     return e
 end
 
@@ -218,5 +217,9 @@ end
 
 function Enemy:take_damage(strength_stat)
     self.hp_stat = self.hp_stat - strength_stat
+    if self.sounds.hurt then
+        love.audio.play(self.sounds.hurt)
+    end
+
     print("Enemy took "..strength_stat.." damage. Current HP: "..self.hp_stat)
 end

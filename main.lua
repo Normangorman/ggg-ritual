@@ -326,7 +326,7 @@ function love.draw(dt)
         local obj = world.objects[i]
         obj:draw()
 
-        if DEBUG and obj._collidable or obj._enemy then -- draw it's bounding box for debugging
+        if DEBUG and (obj._collidable or obj._enemy) then -- draw it's bounding box for debugging
             local r,g,b,a = love.graphics.getColor()
             love.graphics.setColor(255,255,255,122)
             love.graphics.rectangle("fill", obj.x, obj.y, obj._width, obj._height)
@@ -394,16 +394,16 @@ function has_valid_position(obj)
     local x, y = obj.x, obj.y
 
     if does_point_collide(obj.x, obj.y) then
-        print("Top left point collides!")
+        --print("Top left point collides!")
         return false
     elseif does_point_collide(obj.x + w, obj.y) then
-        print("Top right point collides!")
+        --print("Top right point collides!")
         return false
     elseif does_point_collide(obj.x, obj.y + h) then
-        print("Bottom left point collides!")
+        --print("Bottom left point collides!")
         return false
     elseif does_point_collide(obj.x + w, obj.y + h) then
-        print("Bottom right point collides!")
+        --print("Bottom right point collides!")
         return false
     end
 
