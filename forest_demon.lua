@@ -15,12 +15,12 @@ function ForestDemon.new()
     f.speed_stat = 5
     f.ai_state = "idle"
 
-    f.animations.idle = Animation.newFromFile("Animations/_NPCS/Nymph/demon_up.lua")
-    f.animations.chasing = Animation.newFromFile("Animations/_NPCS/Nymph/demon_down.lua")
-    f.animations.hitting = Animation.newFromFile("Animations/_NPCS/Nymph/demon_attack.lua")
-    f.animations.nearby = Animation.newFromFile("Animations/_NPCS/Nymph/demon_down.lua")
-    f.animations.hurt = Animation.newFromFile("Animations/_NPCS/Nymph/demon_damage.lua")
-    f.animations.dying = Animation.newFromFile("Animations/_NPCS/Nymph/demon_death.lua")
+    f.animations.idle = Animation.newFromFile("Animations/_NPCS/Demon/demon_up.lua")
+    f.animations.chasing = Animation.newFromFile("Animations/_NPCS/Demon/demon_down.lua")
+    f.animations.hitting = Animation.newFromFile("Animations/_NPCS/Demon/demon_attack.lua")
+    f.animations.nearby = Animation.newFromFile("Animations/_NPCS/Demon/demon_down.lua")
+    f.animations.hurt = Animation.newFromFile("Animations/_NPCS/Demon/demon_damage.lua")
+    f.animations.dying = Animation.newFromFile("Animations/_NPCS/Demon/demon_death.lua")
     f.current_animation = f.animations.idle
 
     f.sounds = {}
