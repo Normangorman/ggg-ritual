@@ -28,4 +28,4 @@ these are conditions for losing.
 
 Download löve and run:
 
-  love ggg-ritual
+    love ggg-ritual
