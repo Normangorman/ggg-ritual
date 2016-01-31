@@ -1,7 +1,7 @@
 MainMenu = {}
 MainMenu.__index = MainMenu
 
-local paddingStart = 50
+local paddingStart = 260
 local buttonPadding = 10
 local numberOfButtons = 2
 local buttonWidth = 200
@@ -42,10 +42,18 @@ function MainMenu.new()
     menu.timeLeft = 0
     menu.timerAction = function () end
 
+    menu.splashScreen = true
+
+    menu.splashScreenImg = love.graphics.newImage("Assets/_UI/splash.png")
+
+    menu:startTimer(2, function ()
+        menu.splashScreen = false
+    end)
+
     for i=1, numberOfButtons do
         table.insert(menu.buttons, {})
-        menu.buttons[i].normalImg = love.graphics.newImage("Assets/_UI/button.png")
-        menu.buttons[i].pressedImg = love.graphics.newImage("Assets/_UI/button.png")
+        menu.buttons[i].normalImg = love.graphics.newImage("Assets/_UI/button"..i.."normal.png")
+        menu.buttons[i].pressedImg = love.graphics.newImage("Assets/_UI/button"..i.."pressed.png")
         menu.buttons[i].action = buttonActions[i]
     end
 
@@ -57,6 +65,9 @@ end
 
 
 function MainMenu:draw(dt)
+    if self.splashScreen then
+        love.graphics.draw(self.splashScreenImg, 0, 0)
+    end
     currentDrawPosition = paddingStart
     love.graphics.draw(self.menuBackground, 0, 0)
     for i=1, #self.buttons do
@@ -66,7 +77,7 @@ function MainMenu:draw(dt)
         else
             drawingImg = self.buttons[i].normalImg
         end
-        self.buttons[i].xPos = (SCREEN_WIDTH - buttonWidth) / 2
+        self.buttons[i].xPos = 420
         self.buttons[i].yPos = currentDrawPosition
         love.graphics.draw(drawingImg,
             self.buttons[i].xPos,

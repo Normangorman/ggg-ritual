@@ -17,9 +17,7 @@ function Player.new()
 
     p.health = 10
     p.strength = 10
-    p.speed_stat = 10
-    p.width = 20
-    p.height = 20
+    p.speed_stat = 20
 
     p.animations = {}
     p.animations.down = Animation.newFromFile("Animations/_Player/player_down.lua")
@@ -95,8 +93,6 @@ function Player:set_ai(state)
 end
 
 function Player:move(direction)
-    print("Player move called with direction: " .. direction)
-
     self.current_animation:play()
     c = ENTITY_SPEED_MULTIPLIER
     if direction == "left" then

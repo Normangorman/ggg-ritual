@@ -109,6 +109,9 @@ function world:load()
 
     world:add_game_object(player)
     world:add_game_object(elder)
+<<<<<<< HEAD
+    world:add_enemies()
+=======
 
     for i=1, #world.spawns do
         local spawn_table = world.spawns[i]
@@ -128,6 +131,7 @@ function world:load()
             end
         end
     end
+>>>>>>> origin/master
 
     elder:speak("Hello there!", 2)
 end
@@ -224,7 +228,11 @@ function love.update(dt)
         else
             -- Don't worry about collisions, just move it move it
             obj.x = obj.x + obj.vx * dt
+<<<<<<< HEAD
             obj.y = obj.y + obj.vy * dt
+=======
+            obj.x = obj.x + obj.vy * dt
+>>>>>>> origin/master
         end
 
         if obj._dead then

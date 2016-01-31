@@ -21,7 +21,7 @@ function Nymph.new()
     n.animations.nearby = Animation.newFromFile("Animations/_NPCS/Nymph/nymph_down.lua")
     n.animations.hurt = Animation.newFromFile("Animations/_NPCS/Nymph/nymph_damage.lua")
     n.animations.dying = Animation.newFromFile("Animations/_NPCS/Nymph/nymph_dying.lua")
-    n.current_animation = f.animations.idle
+    n.current_animation = n.animations.idle
 
     n.sounds = {}
     n.sounds["walking"] = love.audio.newSource("Assets/_Sounds/enemy/forest_demon/walking.wav")

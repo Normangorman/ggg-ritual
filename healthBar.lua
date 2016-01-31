@@ -17,7 +17,6 @@ end
 
 function HealthBar:draw()
     local heartWidth = self.heart_full:getWidth()
-    print(self.heart_full)
     local heartXPosition = 790 - heartPadding - heartWidth
     for i=1,numberOfHeartsToRender do
         local heartToDraw = nil
