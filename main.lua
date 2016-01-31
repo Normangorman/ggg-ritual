@@ -10,6 +10,10 @@ require "enemy"
 require "nymph"
 require "mainMenu"
 require "healthBar"
+require "forest_demon"
+require "water_demon"
+require "rock_bat"
+require "ghost"
 require "SoundManager"
 require "gamePlay"
 require "villager"
@@ -225,7 +229,7 @@ function love.update(dt)
         else
             -- Don't worry about collisions, just move it move it
             obj.x = obj.x + obj.vx * dt
-            obj.x = obj.x + obj.vy * dt
+            obj.y = obj.y + obj.vy * dt
         end
 
         if obj._dead then

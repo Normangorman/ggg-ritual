@@ -3,7 +3,7 @@ setmetatable(RockBat, Enemy)
 RockBat.__index = RockBat
 
 function RockBat.new()
-    local f = RockBat.new()
+    local f = Enemy.new()
     setmetatable(f, RockBat)
 
     f.x = 0
