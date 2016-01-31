@@ -210,6 +210,10 @@ function love.update(dt)
         player:idle()
     end
 
+    if player.health <= 0 then
+	gamePlay:death()
+    end
+
     for i=1, #world.objects do
         local obj = world.objects[i]
 

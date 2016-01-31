@@ -125,6 +125,11 @@ function Enemy:update_AI()
 	 end
 	 -- if animation has finished
 	 if not self.current_animation.playing then
+		 player.health = player.health - self.damage_stat
+		 print(11111111111111111111111111111111111111111111111111111111111111111111111111111111111)
+	 	 if player.health <= 0 then
+		     player.dead = true
+		 end
 		 self:set_ai("nearby")
 	 end
          -- if player is colliding with enemy, will set them to hurt state

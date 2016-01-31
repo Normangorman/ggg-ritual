@@ -1,1 +1,1 @@
-return {frames={{y=1,x=1},{y=1,x=2}},imagePath="Assets/_NPCS/Nymph/nymph_attack.png",frameHeight=64,frameWidth=64,animationSettings={defaultDuration=0.25,loop=true,bounce=false,name="nymph_attack",drawOnFinish=true}}
+return {frames={{y=1,x=1},{y=1,x=2}},imagePath="Assets/_NPCS/Nymph/nymph_attack.png",frameHeight=64,frameWidth=64,animationSettings={defaultDuration=0.25,loop = false,bounce=false,name="nymph_attack",drawOnFinish=true}}
