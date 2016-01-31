@@ -4,7 +4,7 @@ Ghost.__index = Ghost
 
 function Ghost.new()
     local g = Enemy.new()
-    setmetatable(f, Ghost)
+    setmetatable(g, Ghost)
 
     g.x = 0
     g.y = 0
@@ -22,7 +22,7 @@ function Ghost.new()
     g.animations.nearby = Animation.newFromFile("Animations/_NPCS/Nymph/nymph_down.lua")
     g.animations.hurt = Animation.newFromFile("Animations/_NPCS/Nymph/nymph_damage.lua")
     g.animations.dying = Animation.newFromFile("Animations/_NPCS/Nymph/nymph_dying.lua")
-    g.current_animation = f.animations.idle
+    g.current_animation = g.animations.idle
 
     g.sounds = {}
     g.sounds["walking"] = love.audio.newSource("Assets/_Sounds/enemy/ghost/walking.wav")

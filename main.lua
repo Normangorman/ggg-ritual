@@ -10,6 +10,10 @@ require "enemy"
 require "nymph"
 require "mainMenu"
 require "healthBar"
+require "forest_demon"
+require "water_demon"
+require "rock_bat"
+require "ghost"
 
 ENTITY_SPEED_MULTIPLIER = 12 -- multiplied by an entity's speed_stat to get it's real speed in pixels
 SCREEN_WIDTH = 790
@@ -72,9 +76,7 @@ function love.load()
 
     world:add_game_object(player)
     world:add_game_object(elder)
-
-    table.insert(world.objects, player)
-    table.insert(world.objects, elder)
+    world:add_enemies()
 
     local nymph = Nymph.new()
     nymph.x = 300
@@ -147,8 +149,8 @@ function love.update(dt)
             end
         else
             -- Don't worry about collisions, just move it move it
-            obj.x = obj.x + obj.vx
-            obj.x = obj.x + obj.vy
+            obj.x = obj.x + obj.vx * dt
+            obj.y = obj.y + obj.vy * dt
         end
 
         if obj._dead then

@@ -3,7 +3,7 @@ setmetatable(WaterDemon, Enemy)
 WaterDemon.__index = WaterDemon
 
 function WaterDemon.new()
-    local f = WaterDemon.new()
+    local f = Enemy.new()
     setmetatable(f, WaterDemon)
 
     f.x = 0
