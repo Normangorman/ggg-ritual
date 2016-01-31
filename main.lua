@@ -13,11 +13,12 @@ require "healthBar"
 require "SoundManager"
 require "gamePlay"
 require "forest_demon"
+require "villager"
 
 ENTITY_SPEED_MULTIPLIER = 12 -- multiplied by an entity's speed_stat to get it's real speed in pixels
 SCREEN_WIDTH = 790
 COLLIDABLE_TILE_ID = 0
-DEBUG = true
+DEBUG = false
 
 onMenu = true
 player = nil
@@ -47,9 +48,9 @@ world.spawns = {
         ForestDemon.new,
         {102,51}
     },
-    { -- Villagers
-        Nymph.new, -- CHANGE ME
-        {138,21}, {166,21}, {171,34}, {129,33}, {167,42}
+    {
+        Villager.new, -- CHANGE ME
+        {138,21}, {166,21}, {171,34}, {129,33}, {167,42}, {163, 25}, {147,30}, {159,26}
     },
     { -- Witch
         Nymph.new, -- CHANGE ME
@@ -190,6 +191,10 @@ function love.update(dt)
         --debug
     end
 
+    if love.keyboard.isDown(" ") then
+        player:attack()
+    end
+
     if idle == true then
         player:idle()
     end
@@ -219,7 +224,47 @@ function love.update(dt)
             obj.x = obj.x + obj.vx * dt
             obj.x = obj.x + obj.vy * dt
         end
+    end
 
+    -- Collide player with enemies
+    for i=1, #world.objects do
+        local obj = world.objects[i]
+
+        if obj._enemy then
+            -- Attempt to collide with player
+            local px, py, pw, ph = player.x, player.y, player._width, player._height
+            local ex, ey, ew, eh = obj.x, obj.y, obj._width, obj._height
+
+            -- Check if any of the points in the enemy's bounding box lie within the players
+            local enemy_points = {
+                {ex,ey}, {ex+ew, ey},
+                {ex, ey+eh}, {ex+ew, ey+eh}
+            }
+
+            local collision = false
+            for i=1, #enemy_points do
+                local point = enemy_points[i]
+                local x, y = point[1], point[2]
+
+                if isCoordInRect(x,y, px,py,pw,ph) then
+                    collision = true
+                    break
+                end
+            end
+
+            if collision then
+                --print("Collision with enemy!")
+                if player.attacking and not player.hit_enemy then
+                    player.hit_enemy = true
+                    obj:take_damage(player.strength)
+                end
+            end
+        end
+    end
+
+    -- Remove dead objects
+    for i=#world.objects, 1, -1 do
+        local obj = world.objects[i]
         if obj._dead then
             world:remove_game_object(obj._id)
         end
@@ -255,7 +300,7 @@ function love.draw(dt)
         local obj = world.objects[i]
         obj:draw()
 
-        if DEBUG and obj._collidable then -- draw it's bounding box for debugging
+        if DEBUG and obj._collidable or obj._enemy then -- draw it's bounding box for debugging
             local r,g,b,a = love.graphics.getColor()
             love.graphics.setColor(255,255,255,122)
             love.graphics.rectangle("fill", obj.x, obj.y, obj._width, obj._height)

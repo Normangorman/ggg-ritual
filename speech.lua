@@ -29,7 +29,7 @@ function Speech:update(dt)
 end
 
 function Speech:draw()
-    love.graphics.printf(self.text, self.x, self.y, 100, "center")
+    love.graphics.printf(self.text, self.x, self.y, 1000, "left")
 end
 
 function Speech:follow_owner()

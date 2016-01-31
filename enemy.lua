@@ -10,10 +10,13 @@ function Enemy.new()
     e.y = 0
     e.vx = 0
     e.vy = 0
-    e.hp_stat = 2
+    e.hp_stat = 40
     e.damage_stat = 1
     e.speed_stat = 7
     e.ai_state = "idle"
+    e._enemy = true
+    e._width = 64
+    e._height = 64
 
     -- Should be set by child class
     e.animations = {}
@@ -40,7 +43,7 @@ function Enemy:update(dt)
     self.vx = 0
     self.vy = 0
 
-    self:update_AI()
+    --self:update_AI()
 
     if self.current_animation then
         self.current_animation:update(dt)
@@ -49,13 +52,28 @@ function Enemy:update(dt)
     if self.frames_waiting > 0 then
         self.frames_waiting = self.frames_waiting - 1
     end
+
+    if self.dying and love.timer.getTime() - self.death_begin_time > 2.0 then
+        print("Enemy set to dead")
+        self._dead = true
+    end
+
+    if self.hp_stat <= 0 and not self.dying then
+        print("Enemy begin death sequence")
+        self.dying = true
+        self.death_begin_time = love.timer.getTime()
+        self.current_animation = self.animations.dying
+        self.current_animation:play()
+    end
 end
 
 function Enemy:draw()
     if self.current_animation then
         self.current_animation:draw(self.x, self.y)
     else
-        print("No sprite found for enemy! Drawing rectangle instead.")
+        if DEBUG then
+            --print("No sprite found for enemy! Drawing rectangle instead.")
+        end
         love.graphics.rectangle("fill", self.x, self.y, 10, 10)
     end
 end
@@ -187,4 +205,9 @@ function Enemy:pursue_player()
 
     self.vx = speed * math.cos(direction)
     self.vy = speed * math.sin(direction)
+end
+
+function Enemy:take_damage(strength_stat)
+    self.hp_stat = self.hp_stat - strength_stat
+    print("Enemy took "..strength_stat.." damage. Current HP: "..self.hp_stat)
 end
