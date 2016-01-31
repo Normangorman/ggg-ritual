@@ -23,11 +23,14 @@ function SoundManager.new()
     }
 
     s.sound_loops.lake = {
-        love.audio.newSource("Assets/_Sounds/ambienceloops/nearwater01.wav", "static")
+        love.audio.newSource("Assets/_Sounds/ambienceloops/nearwater01.wav", "static"),
+        love.audio.newSource("Assets/_Sounds/ambienceloops/lake01.wav", "static"),
+        love.audio.newSource("Assets/_Sounds/ambienceloops/river01.wav", "static")
     }
 
     s.sound_loops.forest = {
-        love.audio.newSource("Assets/_Sounds/ambienceloops/deepforest01.wav", "static")
+        love.audio.newSource("Assets/_Sounds/ambienceloops/deepforest01.wav", "static"),
+        love.audio.newSource("Assets/_Sounds/ambienceloops/forest01.wav", "static")
     }
 
     s.sound_bites = {}
@@ -52,15 +55,17 @@ end
 function SoundManager:update_sound()
     local zone = world.player_current_zone
 
+    love.audio.stop()
+
     if zone == "Mine" then
         -- CHANGE THIS RANDOM LOOP
-        self.current_loop = self.sound_loops.mine[1]
+        self.current_loop = self.sound_loops.mine[math.random(1, #self.sound_loops.mine)]
     elseif zone == "Forest" then
-        self.current_loop = self.sound_loops.forest[1]
+        self.current_loop = self.sound_loops.forest[math.random(1, #self.sound_loops.forest)]
     elseif zone == "Village" then
-        self.current_loop = self.sound_loops.village[1]
+        self.current_loop = self.sound_loops.village[math.random(1, #self.sound_loops.village)]
     elseif zone == "Lake" then
-        self.current_loop = self.sound_loops.Lake[1]
+        self.current_loop = self.sound_loops.lake[math.random(1, #self.sound_loops.lake)]
     end
 
     love.audio.play(self.current_loop)
