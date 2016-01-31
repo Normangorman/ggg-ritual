@@ -23,3 +23,7 @@ these are conditions for losing.
 - Context dependent sound
 - Basic enemy AI four enemies
 - Villagers with text
+
+## Installation instructions
+
+Unzip the file and run WeWillRemember.exe
