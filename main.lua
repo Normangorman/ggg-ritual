@@ -13,24 +13,55 @@ require "healthBar"
 require "SoundManager"
 require "gamePlay"
 require "villager"
+require "forest_demon"
 
 ENTITY_SPEED_MULTIPLIER = 12 -- multiplied by an entity's speed_stat to get it's real speed in pixels
 SCREEN_WIDTH = 790
 COLLIDABLE_TILE_ID = 0
-DEBUG = false
+DEBUG = true
 
 onMenu = true
 player = nil
 elder = nil
 sideBar = nil
-world = {}
 mainMenu = {}
 healthBar = {}
+
+world = {}
 world.objects = {}
 world.map = nil
 world.secondsElapsedInDay = 0
 world.player_current_zone = "Village" -- Could be "Mine", "Lake", "Forest"
 world.next_object_id = 0
+world.zones = {
+    Forest={{15,7}, {122,74}},
+    Mine={{131,69}, {236,175}},
+    Lake={{176,1}, {259,72}},
+    Village={{123,14}, {176,68}}
+}
+world.spawns = {
+    {
+        Nymph.new,
+        {55,44}, {75,51}, {55, 52}
+    },
+    {
+        ForestDemon.new,
+        {102,51}
+    },
+    { -- Villagers
+        Nymph.new, -- CHANGE ME
+        {138,21}, {166,21}, {171,34}, {129,33}, {167,42}
+    },
+    { -- Witch
+        Nymph.new, -- CHANGE ME
+        {167,144}
+    },
+    { -- Water boss
+        Nymph.new, -- CHANGE ME
+        {216,51}
+    }
+}
+
 GUI = {}
 GUI.objects = {}
 soundManager = SoundManager.new()
@@ -57,18 +88,13 @@ end
 
 function world:load()
     onMenu = false
-    love.update(0)
-    elder:speak("Hello there!", 2)
-end
 
-function love.load()
     player = Player.new()
     elder = Elder.new()
     sideBar = SideBar.new()
     --Delete later
     healthBar = HealthBar.new()
     mainMenu = MainMenu.new()
-
 
     world.map = sti.new("Assets/_Map/MAP.lua")
     world.camera_x = math.floor(player.x - love.graphics.getWidth() / 2)
@@ -80,12 +106,31 @@ function love.load()
     world:add_game_object(player)
     world:add_game_object(elder)
 
-    local nymph = Nymph.new()
-    nymph.x = 300
-    nymph.y = 300
-    world:add_game_object(nymph)
+    for i=1, #world.spawns do
+        local spawn_table = world.spawns[i]
+        local new_unit_func = spawn_table[1]
 
-    --world:load()
+        for j=2, #spawn_table do
+            local coords = spawn_table[j]
+            local x,y = coords[1], coords[2]
+
+            local unit = new_unit_func()
+            unit.x = (x-1)*32
+            unit.y = (y-1)*32
+            world:add_game_object(unit)
+
+            if DEBUG then
+                print("Spawned a unit at "..unit.x..","..unit.y)
+            end
+        end
+    end
+
+    elder:speak("Hello there!", 2)
+end
+
+function love.load()
+    onMenu = true
+    mainMenu = MainMenu.new()
 end
 
 function love.update(dt)
@@ -99,6 +144,26 @@ function love.update(dt)
 
     world.camera_x = math.floor(player.x - love.graphics.getWidth() / 2)
     world.camera_y = math.floor(player.y - love.graphics.getHeight() / 2)
+
+    -- Update world.player_current_zone
+    for zone_name, points in pairs(world.zones) do
+        local top_l = points[1]
+        local bottom_r = points[2]
+
+        local tx, ty = get_unit_tile(player)
+
+        --[[
+        if DEBUG then
+            print("Player current tile: "..tx..","..ty)
+            print("Player current zone: "..world.player_current_zone)
+        end
+        ]]
+
+        if isCoordInRect(tx,ty, top_l[1], top_l[2], bottom_r[1] - top_l[1], bottom_r[2] - top_l[2]) then
+            world.player_current_zone = zone_name
+            break
+        end
+    end
 
     soundManager:update(dt)
     gamePlay:update(dt)
@@ -154,8 +219,8 @@ function love.update(dt)
             end
         else
             -- Don't worry about collisions, just move it move it
-            obj.x = obj.x + obj.vx
-            obj.x = obj.x + obj.vy
+            obj.x = obj.x + obj.vx * dt
+            obj.x = obj.x + obj.vy * dt
         end
 
         if obj._dead then
@@ -193,7 +258,7 @@ function love.draw(dt)
         local obj = world.objects[i]
         obj:draw()
 
-        if obj._collidable then -- draw it's bounding box for debugging
+        if DEBUG and obj._collidable then -- draw it's bounding box for debugging
             local r,g,b,a = love.graphics.getColor()
             love.graphics.setColor(255,255,255,122)
             love.graphics.rectangle("fill", obj.x, obj.y, obj._width, obj._height)
@@ -275,4 +340,9 @@ function has_valid_position(obj)
     end
 
     return true
+end
+
+function get_unit_tile(unit)
+    local tx, ty = world.map:convertScreenToTile(unit.x, unit.y)
+    return math.ceil(tx), math.ceil(ty)
 end

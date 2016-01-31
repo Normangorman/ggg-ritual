@@ -7,7 +7,8 @@ GamePlay.tasksByDay = {{
             {123, 29},
             {123, 30},
             {123, 31}
-        }},
+            }
+        },
         {"Find the Wood Nymphs’ home", {
             {30, 38},
             {31, 38},
@@ -36,6 +37,10 @@ GamePlay.tasksByDay = {{
         -- or --
         {"Defeat the Lake King", 0, 0},
         {"Return to the bandit leader", 0, 0},
+        {"Bring the ring to your Elder", 0, 0}
+    },
+    {
+        {"Enter the Mines", 0, 0},
 
         {"Bring the ring to your Elder", {
             {149, 18},
@@ -47,9 +52,7 @@ GamePlay.tasksByDay = {{
             {169, 69}
         }},
         {"Find the Three Witches", 0, 0},
-        -- collide witches --
         {"Defeat the Three Witches", 0, 0},
-        -- kill witches --
         {"Take the staff back to your Elder", {
             {149, 18},
             {150, 18}

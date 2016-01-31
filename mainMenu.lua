@@ -1,7 +1,7 @@
 MainMenu = {}
 MainMenu.__index = MainMenu
 
-local paddingStart = 50
+local paddingStart = 260
 local buttonPadding = 10
 local numberOfButtons = 2
 local buttonWidth = 200
@@ -52,8 +52,8 @@ function MainMenu.new()
 
     for i=1, numberOfButtons do
         table.insert(menu.buttons, {})
-        menu.buttons[i].normalImg = love.graphics.newImage("Assets/_UI/button.png")
-        menu.buttons[i].pressedImg = love.graphics.newImage("Assets/_UI/button.png")
+        menu.buttons[i].normalImg = love.graphics.newImage("Assets/_UI/button"..i.."normal.png")
+        menu.buttons[i].pressedImg = love.graphics.newImage("Assets/_UI/button"..i.."pressed.png")
         menu.buttons[i].action = buttonActions[i]
     end
 
@@ -77,7 +77,7 @@ function MainMenu:draw(dt)
         else
             drawingImg = self.buttons[i].normalImg
         end
-        self.buttons[i].xPos = (SCREEN_WIDTH - buttonWidth) / 2
+        self.buttons[i].xPos = 420
         self.buttons[i].yPos = currentDrawPosition
         love.graphics.draw(drawingImg,
             self.buttons[i].xPos,
