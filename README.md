@@ -24,6 +24,8 @@ these are conditions for losing.
 - Basic enemy AI four enemies
 - Villagers with text
 
-## Installation instructions
+## Running
 
-Unzip the file and run WeWillRemember.exe
+Download löve and run:
+
+  love ggg-ritual
