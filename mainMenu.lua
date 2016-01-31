@@ -42,6 +42,14 @@ function MainMenu.new()
     menu.timeLeft = 0
     menu.timerAction = function () end
 
+    menu.splashScreen = true
+
+    menu.splashScreenImg = love.graphics.newImage("Assets/_UI/splash.png")
+
+    menu:startTimer(2, function ()
+        menu.splashScreen = false
+    end)
+
     for i=1, numberOfButtons do
         table.insert(menu.buttons, {})
         menu.buttons[i].normalImg = love.graphics.newImage("Assets/_UI/button"..i.."normal.png")
@@ -58,6 +66,7 @@ end
 
 function MainMenu:draw(dt)
     currentDrawPosition = 260
+
     love.graphics.draw(self.menuBackground, 0, 0)
     for i=1, #self.buttons do
         local drawingImg = nil;

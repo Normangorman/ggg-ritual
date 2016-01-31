@@ -1,8 +1,7 @@
 GamePlay = {}
 GamePlay.__index = GamePlay
 
-GamePlay.tasksByDay = {
-    {
+GamePlay.tasksByDay = {{
         {"Enter the Forest", {
             {123, 28},
             {123, 29},
@@ -11,24 +10,56 @@ GamePlay.tasksByDay = {
             }
         },
         {"Find the Wood Nymphs’ home", {
-            {}
+            {30, 38},
+            {31, 38},
+            {32, 38},
+            {33, 38},
+            {34, 38},
+            {35, 38}
         }},
-        {"Find a way to heal the blacksmith", 0, 0 },
-        {"Return to your Elder", 0, 0 }
-    },{
+        {"Find a way to heal the blacksmith", {
+          -- kill the nymf or touch --
+           {30, 23},
+           {31, 23},
+           {32, 23},
+           {33, 23},
+           {34, 23}
+        }},
+        {"Return to your Elder", {
+          {149, 18},
+          {150, 18}
+        }}
+    },
+    {
         {"Find the bandits at the lakeside", 0, 0},
-        {"Clear the lakeside of bandits, or defeat the Lake King", 0, 0},
+        -- collide bandit --
+        {"Clear the lakeside of bandits", 0, 0},
+        -- or --
         {"Defeat the Lake King", 0, 0},
         {"Return to the bandit leader", 0, 0},
         {"Bring the ring to your Elder", 0, 0}
     },
     {
         {"Enter the Mines", 0, 0},
+
+        {"Bring the ring to your Elder", {
+            {149, 18},
+            {150, 18}
+        }}
+    },{
+        {"Enter the Mines", {
+            {168, 69},
+            {169, 69}
+        }},
         {"Find the Three Witches", 0, 0},
         {"Defeat the Three Witches", 0, 0},
-        {"Take the staff back to your Elder", 0, 0}
+        {"Take the staff back to your Elder", {
+            {149, 18},
+            {150, 18}
+        }}
     }
 }
+
 
 local secondsInDay = 5*60
 

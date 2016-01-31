@@ -6,8 +6,8 @@ function Elder.new()
     local e = GameObject.new()
     setmetatable(e, Elder)
 
-    e.x = 200
-    e.y = 200
+    e.x = 150*32
+    e.y = 18*32
     e.sprite1 = love.graphics.newImage("Assets/_NPCS/Elder/elder1.png")
     e.sprite2 = love.graphics.newImage("Assets/_NPCS/Elder/elder2.png")
     e.sprite3 = love.graphics.newImage("Assets/_NPCS/Elder/elder3.png")

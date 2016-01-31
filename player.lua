@@ -18,8 +18,6 @@ function Player.new()
     p.health = 10
     p.strength = 10
     p.speed_stat = 20
-    p.width = 20
-    p.height = 20
 
     p.animations = {}
     p.animations.down = Animation.newFromFile("Animations/_Player/player_down.lua")
