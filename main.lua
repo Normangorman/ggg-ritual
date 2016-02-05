@@ -199,7 +199,7 @@ function love.update(dt)
     end
 
     if love.keyboard.isDown("d") then
-        --debug
+        gamePlay:death()
     end
 
     if idle == true then

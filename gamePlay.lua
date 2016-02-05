@@ -80,22 +80,32 @@ function GamePlay:getTaskTextAtIndex(i)
 end
 
 function GamePlay:getNumberOfTasks()
-    print(#GamePlay.tasksByDay[self.day])
     return #GamePlay.tasksByDay[self.day]
 end
 
 function GamePlay:getTilesForTask(taskI)
-    print(self.day, taskI, GamePlay.tasksByDay[self.day][taskI])
     return GamePlay.tasksByDay[self.day][taskI][2]
 end
 
 function GamePlay:death()
-    print("Death")
     gamePlay.lose = true
+    menu:startTimer(0.25, function()
+        menu.currCutSceneImg = cutSceneImgs[2]
+        menu:startTimer(0.5, function()
+            menu.currCutSceneImg = cutSceneImgs[3]
+            menu:startTimer(0.5, function()
+                menu.currCutSceneImg = cutSceneImgs[4]
+                menu:startTimer(0.5, function()
+                    lua.event.quit()
+                end)
+            end)
+        end)
+    end)
 end
 
 function GamePlay:win()
-    print("You win")
+    onMenu = true
+    mainMenu.endingScene = true
 end
 
 function GamePlay:completeDay()

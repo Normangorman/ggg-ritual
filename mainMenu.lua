@@ -32,6 +32,8 @@ function isCoordInRect(x, y, rectX, rectY, widthX, widthY)
         and y < rectY + widthY
 end
 
+local cutSceneImg = 4
+
 function MainMenu.new()
     local menu = {}
     setmetatable(menu, MainMenu)
@@ -42,13 +44,22 @@ function MainMenu.new()
     menu.timeLeft = 0
     menu.timerAction = function () end
 
-    menu.splashScreen = true
+    menu.splashScene = true
 
     menu.splashScreenImg = love.graphics.newImage("Assets/_UI/splash.png")
 
-    menu:startTimer(2, function ()
-        menu.splashScreen = false
+    menu:startTimer(1, function ()
+        menu.splashScene = false
     end)
+
+    menu.endingScene = false
+
+    menu.cutSceneImgs = {}
+    menu.currCutSceneImg = nil--[[
+    for i=1,cutSceneImg do
+        table.insert(menu.cutSceneImgs, love.graphics.newImage("Assets/final_cutscene" .. i .. ".png"))
+    end
+    menu.currCutSceneImg = cutSceneImgs[1] ]]
 
     for i=1, numberOfButtons do
         table.insert(menu.buttons, {})
@@ -65,7 +76,11 @@ end
 
 
 function MainMenu:draw(dt)
-    if self.splashScreen then
+    if self.endingScene then
+        love.graphics.draw(self.currCutSceneImg, 0, 0)
+        love.graphics.print("hi", 200, 50)
+    end
+    if self.splashScene then
         love.graphics.draw(self.splashScreenImg, 0, 0)
         return
     end
