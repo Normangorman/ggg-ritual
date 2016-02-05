@@ -17,7 +17,7 @@ end
 
 function HealthBar:draw()
     local heartWidth = self.heart_full:getWidth()
-    local heartXPosition = 790 - heartPadding - heartWidth
+    local heartXPosition = world.camera_x + 790 - heartPadding - heartWidth
     for i=1,numberOfHeartsToRender do
         local heartToDraw = nil
         if i < self.health then
@@ -25,7 +25,7 @@ function HealthBar:draw()
         else
             heartToDraw = self.heart_empty
         end
-        love.graphics.draw(self.heart_full, heartXPosition, heartPadding)
+        love.graphics.draw(self.heart_full, heartXPosition, world.camera_y + heartPadding)
         heartXPosition = heartXPosition - heartWidth - betweenHeartPadding
     end
 end

@@ -10,7 +10,7 @@ function Nymph.new()
     n.y = 0
     n.vx = 0
     n.vy = 0
-    n.hp_stat = 2
+    n.hp_stat = 40
     n.damage_stat = 1
     n.speed_stat = 5
     n.ai_state = "idle"

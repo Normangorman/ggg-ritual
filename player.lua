@@ -19,6 +19,11 @@ function Player.new()
     p.strength = 10
     p.speed_stat = 20
 
+    p.attack_start_time = 0
+    p.attacking = false
+    p.attack_duration = 0.6
+    p.hit_enemy = false
+
     p.animations = {}
     p.animations.down = Animation.newFromFile("Animations/_Player/player_down.lua")
     p.animations.up = Animation.newFromFile("Animations/_Player/player_up.lua")
@@ -31,12 +36,26 @@ function Player.new()
     p.ai_state = "idle"   --can be idle, walking, hitting, hurt, jumping or dying
     p.direction = "down"  --can be up, down, left or right
 
+    p.dead = false
+
     p.sounds = {}
     p.sounds["walking"] = nil
-    p.sounds["hitting"] = nil
+    p.sounds["hitting"] = love.audio.newSource("Assets/_Sounds/scythe/hitenemy1.wav", "static")
     p.sounds["hurt"] = nil
     p.sounds["jumping"] = nil
     p.sounds["dying"] = nil
+
+    p.footstep_sound_index = 1
+    p.last_footstep_sound_time = 0
+    p.playing_footstep = false
+    p.footstep_sounds = {
+        love.audio.newSource("Assets/_Sounds/footsteps/generic/1.wav", "static"),
+        love.audio.newSource("Assets/_Sounds/footsteps/generic/2.wav", "static"),
+        love.audio.newSource("Assets/_Sounds/footsteps/generic/3.wav", "static"),
+        love.audio.newSource("Assets/_Sounds/footsteps/generic/4.wav", "static"),
+        love.audio.newSource("Assets/_Sounds/footsteps/generic/5.wav", "static"),
+        love.audio.newSource("Assets/_Sounds/footsteps/generic/6.wav", "static")
+    }
 
     return p
 end
@@ -47,17 +66,26 @@ end
 
 function Player:update(dt)
     self.current_animation:update(dt)
-    self:update_AI()
-end
 
+    if self.attacking then
+        local time_since_attack = love.timer.getTime() - self.attack_start_time
+        if time_since_attack >= self.attack_duration then
+            self.attacking = false
+            self.hit_enemy = false
+        end
+    end
 
-function Player:update_AI()
-    if self.ai_state == "idle" then
-    elseif self.ai_state == "walking" then
-    elseif self.ai_state == "hitting" then
-    elseif self.ai_state == "hurt" then
-    elseif self.ai_state == "jumping" then
-    elseif self.ai_state == "dying" then
+    if not self.playing_footstep then
+        if self.vx ~= 0 or self.vy ~= 0 then
+            self.last_footstep_sound_time = love.timer.getTime()
+            love.audio.play(self.footstep_sounds[(self.footstep_sound_index % 6) + 1])
+            self.footstep_sound_index = self.footstep_sound_index + 1
+        end
+    else
+        local dt = love.timer.getTime() - self.last_footstep_sound_time
+        if dt > 0.25 then
+            self.playing_footstep = false
+        end
     end
 end
 
@@ -95,27 +123,54 @@ end
 function Player:move(direction)
     self.current_animation:play()
     c = ENTITY_SPEED_MULTIPLIER
+
     if direction == "left" then
         self.vx = -self.speed_stat * c
-        self.current_animation = self.animations.left
+
+        if not self.attacking then
+            self.current_animation = self.animations.left
+        end
     elseif direction == "right" then
         self.vx = self.speed_stat * c
-        self.current_animation = self.animations.right
+
+        if not self.attacking then
+            self.current_animation = self.animations.right
+        end
     elseif direction == "down" then
         self.vy = self.speed_stat * c
-        self.current_animation = self.animations.down
+
+        if not self.attacking then
+            self.current_animation = self.animations.down
+        end
     elseif direction == "up" then
         self.vy = -self.speed_stat * c
-        self.current_animation = self.animations.up
+
+        if not self.attacking then
+            self.current_animation = self.animations.up
+        end
     end
 end
 
 function Player:idle()
     self.vx = 0
     self.vy = 0
-    self.current_animation:pause()
+
+    if not self.attacking then
+        self.current_animation:pause()
+    end
 end
 
 function Player:attack()
-    self.attacking = true
+    if self.attacking then
+        return
+    else
+        if DEBUG then
+            print("Player attacking!")
+        end
+        self.attack_start_time = love.timer.getTime()
+        self.attacking = true
+        self.current_animation = self.animations.attack
+        self.current_animation:play()
+        love.audio.play(self.sounds.hitting)
+    end
 end

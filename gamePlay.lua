@@ -80,10 +80,12 @@ function GamePlay:getTaskTextAtIndex(i)
 end
 
 function GamePlay:getNumberOfTasks()
+    --print(#GamePlay.tasksByDay[self.day])
     return #GamePlay.tasksByDay[self.day]
 end
 
 function GamePlay:getTilesForTask(taskI)
+    --print(self.day, taskI, GamePlay.tasksByDay[self.day][taskI])
     return GamePlay.tasksByDay[self.day][taskI][2]
 end
 
