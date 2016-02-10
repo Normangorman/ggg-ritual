@@ -19,11 +19,17 @@ require "gamePlay"
 require "villager"
 require "forest_demon"
 require "villager"
+require "timer"
+require "common"
 
 ENTITY_SPEED_MULTIPLIER = 12 -- multiplied by an entity's speed_stat to get it's real speed in pixels
 SCREEN_WIDTH = 790
 COLLIDABLE_TILE_ID = 0
-DEBUG = false
+if arg[2] == "debug" then
+    DEBUG = true
+else
+    DEBUG = false
+end
 
 onMenu = true
 player = nil
@@ -35,7 +41,6 @@ healthBar = {}
 world = {}
 world.objects = {}
 world.map = nil
-world.secondsElapsedInDay = 0
 world.player_current_zone = "Village" -- Could be "Mine", "Lake", "Forest"
 world.next_object_id = 0
 world.zones = {
@@ -135,8 +140,12 @@ function world:load()
 end
 
 function love.load()
-    onMenu = true
-    mainMenu = MainMenu.new()
+    if DEBUG then
+        world:load()
+    else
+        onMenu = true
+        mainMenu = MainMenu.new()
+    end
 end
 
 function love.quit()
@@ -144,6 +153,7 @@ function love.quit()
 end
 
 function love.update(dt)
+    Timer.updateAll(dt)
     if onMenu then
         mainMenu:update(dt)
         return
@@ -154,7 +164,6 @@ function love.update(dt)
     end
 
     world.map:update(dt)
-    world.secondsElapsedInDay = world.secondsElapsedInDay + dt
 
     world.camera_x = math.floor(player.x - love.graphics.getWidth() / 2)
     world.camera_y = math.floor(player.y - love.graphics.getHeight() / 2)

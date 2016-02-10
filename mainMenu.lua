@@ -68,8 +68,7 @@ function MainMenu.new()
         menu.buttons[i].action = buttonActions[i]
     end
 
-    menu.selectStartSound = love.audio.newSource("Assets/_Sounds/selectstart.wav"
-        , static)
+    menu.selectStartSound = love.audio.newSource("Assets/_Sounds/selectstart.wav", static)
     menu.menuBackground = love.graphics.newImage("Assets/_UI/titlescreen.png")
     return menu
 end

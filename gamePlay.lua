@@ -60,17 +60,24 @@ GamePlay.tasksByDay = {{
     }
 }
 
+local cutSceneImgsNum = 3
 
-local secondsInDay = 5*60
 
 function GamePlay.new()
     gamePlay = {}
     setmetatable(gamePlay, GamePlay)
 
+    gamePlay.secondsInDay = 1
     gamePlay.secondsElapsedInDay = 0
     gamePlay.day = 1
     gamePlay.lose = false
     --gamePlay.numberOfTasks = #GamePlay.tasksByDay[self.day]
+
+    gamePlay.cutSceneImgs = {}
+
+    for i=1,cutSceneImgsNum do
+        table.insert(gamePlay.cutSceneImgs, love.graphics.newImage("Assets/_UI/cutscene_" .. i ..".png"))
+    end
 
     return gamePlay
 end
@@ -91,14 +98,14 @@ end
 
 function GamePlay:death()
     gamePlay.lose = true
-    menu:startTimer(0.25, function()
-        menu.currCutSceneImg = cutSceneImgs[2]
-        menu:startTimer(0.5, function()
-            menu.currCutSceneImg = cutSceneImgs[3]
-            menu:startTimer(0.5, function()
-                menu.currCutSceneImg = cutSceneImgs[4]
-                menu:startTimer(0.5, function()
-                    lua.event.quit()
+    Timer.new(0.25, function()
+        mainMenu.currCutSceneImg = self.cutSceneImgs[1]
+        Timer.new(0.5, function()
+            mainMenu.currCutSceneImg = self.cutSceneImgs[2]
+            Timer.new(0.5, function()
+                mainMenu.currCutSceneImg = self.cutSceneImgs[3]
+                Timer.new(0.5, function()
+                    love.event.quit()
                 end)
             end)
         end)
@@ -145,7 +152,7 @@ function GamePlay:update(dt)
     end
 
     gamePlay.secondsElapsedInDay = gamePlay.secondsElapsedInDay + dt
-    if gamePlay.secondsElapsedInDay >  secondsInDay then
+    if gamePlay.secondsElapsedInDay >= gamePlay.secondsInDay then
         self:death()
     end
 end
