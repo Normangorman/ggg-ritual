@@ -67,7 +67,7 @@ function GamePlay.new()
     gamePlay = {}
     setmetatable(gamePlay, GamePlay)
 
-    gamePlay.secondsInDay = 1
+    gamePlay.secondsInDay = 5*60
     gamePlay.secondsElapsedInDay = 0
     gamePlay.day = 1
     gamePlay.lose = false

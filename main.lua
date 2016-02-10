@@ -1,5 +1,4 @@
 require "lib.lm.Animation.Animation"
-local sti = require "lib.sti"
 
 require "gameobject"
 require "speech"
@@ -21,6 +20,7 @@ require "forest_demon"
 require "villager"
 require "timer"
 require "common"
+require "world"
 
 ENTITY_SPEED_MULTIPLIER = 12 -- multiplied by an entity's speed_stat to get it's real speed in pixels
 SCREEN_WIDTH = 790
@@ -38,106 +38,12 @@ sideBar = nil
 mainMenu = {}
 healthBar = {}
 
-world = {}
-world.objects = {}
-world.map = nil
-world.player_current_zone = "Village" -- Could be "Mine", "Lake", "Forest"
-world.next_object_id = 0
-world.zones = {
-    Forest={{15,7}, {122,74}},
-    Mine={{131,69}, {236,175}},
-    Lake={{176,1}, {259,72}},
-    Village={{123,14}, {176,68}}
-}
-world.spawns = {
-    {
-        Nymph.new,
-        {55,44}, {75,51}, {55, 52}
-    },
-    {
-        ForestDemon.new,
-        {102,51}
-    },
-    {
-        Villager.new, -- CHANGE ME
-        {138,21}, {166,21}, {171,34}, {129,33}, {167,42}, {163, 25}, {147,30}, {159,26}
-    },
-    { -- Witch
-        Nymph.new, -- CHANGE ME
-        {167,144}
-    },
-    { -- Water boss
-        Nymph.new, -- CHANGE ME
-        {216,51}
-    }
-}
+world = World.new()
 
 GUI = {}
 GUI.objects = {}
 soundManager = SoundManager.new()
 gamePlay = GamePlay.new()
-
-function world:add_game_object(g)
-    -- Called when a new GameObject is created
-    g._id = self.next_object_id
-    self.next_object_id = self.next_object_id + 1
-    table.insert(self.objects, g)
-end
-
-function world:remove_game_object(id)
-    print("Removing game object with id: " .. id)
-    for i=1, #world.objects do
-        obj = world.objects[i]
-
-        if obj._id == id then
-            table.remove(world.objects, i)
-            break
-        end
-    end
-end
-
-function world:load()
-    onMenu = false
-
-    player = Player.new()
-    elder = Elder.new()
-    sideBar = SideBar.new()
-
-    --Delete later
-    healthBar = HealthBar.new()
-    mainMenu = MainMenu.new()
-
-    world.map = sti.new("Assets/_Map/MAP.lua")
-    world.camera_x = math.floor(player.x - love.graphics.getWidth() / 2)
-    world.camera_y = math.floor(player.y - love.graphics.getHeight() / 2)
-
-    table.insert(GUI.objects, sideBar)
-    table.insert(GUI.objects, healthBar)
-
-    world:add_game_object(player)
-    world:add_game_object(elder)
-
-    for i=1, #world.spawns do
-        local spawn_table = world.spawns[i]
-        local new_unit_func = spawn_table[1]
-
-        for j=2, #spawn_table do
-            local coords = spawn_table[j]
-            local x,y = coords[1], coords[2]
-
-            local unit = new_unit_func()
-            unit.x = (x-1)*32
-            unit.y = (y-1)*32
-            world:add_game_object(unit)
-
-            if DEBUG then
-                print("Spawned a unit at "..unit.x..","..unit.y)
-            end
-        end
-    end
-
-    elder:speak("Hello there!", 2)
-end
 
 function love.load()
     if DEBUG then
@@ -159,145 +65,7 @@ function love.update(dt)
         return
     end
 
-    if gamePlay.lose then
-	    return
-    end
-
-    world.map:update(dt)
-
-    world.camera_x = math.floor(player.x - love.graphics.getWidth() / 2)
-    world.camera_y = math.floor(player.y - love.graphics.getHeight() / 2)
-
-    -- Update world.player_current_zone
-    for zone_name, points in pairs(world.zones) do
-        local top_l = points[1]
-        local bottom_r = points[2]
-
-        local tx, ty = get_unit_tile(player)
-
-        --[[
-        if DEBUG then
-            print("Player current tile: "..tx..","..ty)
-            print("Player current zone: "..world.player_current_zone)
-        end
-        ]]
-
-        if isCoordInRect(tx,ty, top_l[1], top_l[2], bottom_r[1] - top_l[1], bottom_r[2] - top_l[2]) then
-            world.player_current_zone = zone_name
-            break
-        end
-    end
-
-    soundManager:update(dt)
-    gamePlay:update(dt)
-
-    local idle = true
-    if love.keyboard.isDown("left") then
-        player:move("left")
-        idle = false
-    elseif love.keyboard.isDown("right") then
-        player:move("right")
-        idle = false
-    else
-        player.vx = 0
-    end
-
-    if love.keyboard.isDown("up") then
-        player:move("up")
-        idle = false
-    elseif love.keyboard.isDown("down") then
-        player:move("down")
-        idle = false
-    else
-        player.vy = 0
-    end
-
-    if love.keyboard.isDown("d") then
-        gamePlay:death()
-    end
-
-    if love.keyboard.isDown(" ") then
-        player:attack()
-    end
-
-    if idle == true then
-        player:idle()
-    end
-
-    if player.health <= 0 then
-	gamePlay:death()
-    end
-
-    for i=1, #world.objects do
-        local obj = world.objects[i]
-
-        obj:update(dt)
-        if obj._collidable then
-            -- Attempt horizontal movement first
-            local last_good_x = obj.x
-            obj.x = obj.x + obj.vx * dt
-            if not has_valid_position(obj) then
-                obj.x = last_good_x
-                obj.vx = 0
-            end
-
-            -- Then vertical movement
-            local last_good_y = obj.y
-            obj.y = obj.y + obj.vy * dt
-            if not has_valid_position(obj) then
-                obj.y = last_good_y
-                obj.vy = 0
-            end
-        else
-            -- Don't worry about collisions, just move it move it
-            obj.x = obj.x + obj.vx * dt
-            obj.y = obj.y + obj.vy * dt
-        end
-    end
-
-    -- Collide player with enemies
-    for i=1, #world.objects do
-        local obj = world.objects[i]
-
-        if obj._enemy then
-            -- Attempt to collide with player
-            local px, py, pw, ph = player.x, player.y, player._width, player._height
-            local ex, ey, ew, eh = obj.x, obj.y, obj._width, obj._height
-
-            -- Check if any of the points in the enemy's bounding box lie within the players
-            local enemy_points = {
-                {ex,ey}, {ex+ew, ey},
-                {ex, ey+eh}, {ex+ew, ey+eh}
-            }
-
-            local collision = false
-            for i=1, #enemy_points do
-                local point = enemy_points[i]
-                local x, y = point[1], point[2]
-
-                if isCoordInRect(x,y, px,py,pw,ph) then
-                    collision = true
-                    break
-                end
-            end
-
-            if collision then
-                --print("Collision with enemy!")
-                if player.attacking and not player.hit_enemy then
-                    player.hit_enemy = true
-                    obj:take_damage(player.strength)
-                end
-            end
-        end
-    end
-
-    -- Remove dead objects
-    for i=#world.objects, 1, -1 do
-        local obj = world.objects[i]
-        if obj._dead then
-            world:remove_game_object(obj._id)
-        end
-    end
+    world:update(dt)
 end
 
 function love.draw(dt)
