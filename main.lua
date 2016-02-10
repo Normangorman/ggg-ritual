@@ -21,6 +21,7 @@ require "villager"
 require "timer"
 require "common"
 require "world"
+require "roomManager"
 
 ENTITY_SPEED_MULTIPLIER = 12 -- multiplied by an entity's speed_stat to get it's real speed in pixels
 SCREEN_WIDTH = 790
@@ -39,6 +40,7 @@ mainMenu = {}
 healthBar = {}
 
 world = World.new()
+roomManager = RoomManager.new()
 
 GUI = {}
 GUI.objects = {}
@@ -66,6 +68,7 @@ function love.update(dt)
     end
 
     world:update(dt)
+    roomManager:dispatchEvent("update", dt)
 end
 
 function love.draw(dt)
@@ -79,41 +82,8 @@ function love.draw(dt)
 	love.graphics.print("Game Over", 250, 200)
 	return
     end
-
-    -- Translate the camera to be centered on the player
-    love.graphics.translate(-world.camera_x, -world.camera_y)
-
-    world.map:setDrawRange(world.camera_x, world.camera_y, love.graphics.getWidth(), love.graphics.getHeight())
-    world.map:draw()
-    local mx, my = love.mouse.getPosition()
-    local rx, ry = mx + world.camera_x, my + world.camera_y
-    local tx, ty = world.map:convertScreenToTile(rx, ry)
-    tx = math.floor(tx) + 1
-    ty = math.floor(ty) + 1
-
-    if DEBUG then
-        love.graphics.print("Mouse (x,y): ("..mx..","..my..")", world.camera_x + 300, world.camera_y + 40)
-        love.graphics.print("Game world (x,y): ("..rx..","..ry..")", world.camera_x + 300, world.camera_y + 50)
-        love.graphics.print("Tile (x,y): ("..tx..","..ty..")", world.camera_x + 300, world.camera_y + 60)
-        love.graphics.print("Tile Is Collidable? ("..tostring(is_tile_collidable(tx,ty)), world.camera_x + 300, world.camera_y + 70)
-        love.graphics.print("Mouse Collides? "..tostring(does_point_collide(rx,ry)), world.camera_x + 300, world.camera_y + 80)
-    end
-
-    for i=1, #world.objects do
-        local obj = world.objects[i]
-        obj:draw()
-
-        if DEBUG and (obj._collidable or obj._enemy) then -- draw it's bounding box for debugging
-            local r,g,b,a = love.graphics.getColor()
-            love.graphics.setColor(255,255,255,122)
-            love.graphics.rectangle("fill", obj.x, obj.y, obj._width, obj._height)
-            love.graphics.setColor(r,g,b,a)
-        end
-    end
-
-    for i=1, #GUI.objects do
-        GUI.objects[i]:draw()
-    end
+    world:draw(dt)
+    roomManager:dispatchEvent("draw", dt)
 end
 
 function love.keypressed(key, scancode, isrepeat)
@@ -122,18 +92,21 @@ function love.keypressed(key, scancode, isrepeat)
             player:attack()
         end
     end
+    roomManager:dispatchEvent("keypressed", key, scancode, isrepeat)
 end
 
 function love.mousepressed(x, y, button, istouch)
     if onMenu then
         mainMenu:mousepressed(x, y, button, istouch)
     end
+    roomManager:dispatchEvent("mousepressed", x, y, button, istouch)
 end
 
 function love.mousereleased(x, y, button, istouch)
     if onMenu then
         mainMenu:mousereleased(x, y, button, istouch)
     end
+    roomManager:dispatchEvent("mousepressed", x, y, button, istouch)
 end
 
 function is_tile_collidable(tx,ty)

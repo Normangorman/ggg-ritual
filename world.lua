@@ -54,7 +54,7 @@ end
 
 function World:remove_game_object(id)
     print("Removing game object with id: " .. id)
-    for i=1, #world.objects do
+    for i=1, #self.objects do
         obj = self.objects[i]
 
         if obj._id == id then
@@ -105,6 +105,43 @@ function World:load()
     end
 
     elder:speak("Hello there!", 2)
+end
+
+function World:draw(dt)
+    -- Translate the camera to be centered on the player
+    love.graphics.translate(-self.camera_x, -self.camera_y)
+
+    self.map:setDrawRange(self.camera_x, self.camera_y, love.graphics.getWidth(), love.graphics.getHeight())
+    self.map:draw()
+    local mx, my = love.mouse.getPosition()
+    local rx, ry = mx + self.camera_x, my + self.camera_y
+    local tx, ty = self.map:convertScreenToTile(rx, ry)
+    tx = math.floor(tx) + 1
+    ty = math.floor(ty) + 1
+
+    if DEBUG then
+        love.graphics.print("Mouse (x,y): ("..mx..","..my..")", self.camera_x + 300, self.camera_y + 40)
+        love.graphics.print("Game world (x,y): ("..rx..","..ry..")", self.camera_x + 300, self.camera_y + 50)
+        love.graphics.print("Tile (x,y): ("..tx..","..ty..")", self.camera_x + 300, self.camera_y + 60)
+        love.graphics.print("Tile Is Collidable? ("..tostring(is_tile_collidable(tx,ty)), self.camera_x + 300, self.camera_y + 70)
+        love.graphics.print("Mouse Collides? "..tostring(does_point_collide(rx,ry)), self.camera_x + 300, self.camera_y + 80)
+    end
+
+    for i=1, #self.objects do
+        local obj = self.objects[i]
+        obj:draw()
+
+        if DEBUG and (obj._collidable or obj._enemy) then -- draw it's bounding box for debugging
+            local r,g,b,a = love.graphics.getColor()
+            love.graphics.setColor(255,255,255,122)
+            love.graphics.rectangle("fill", obj.x, obj.y, obj._width, obj._height)
+            love.graphics.setColor(r,g,b,a)
+        end
+    end
+
+    for i=1, #GUI.objects do
+        GUI.objects[i]:draw()
+    end
 end
 
 function World:update(dt)
