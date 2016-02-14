@@ -12,12 +12,12 @@ end
 
 function RoomManager:dispatchEvent(eventName, ...)
     if self.currentClass[eventName] ~= nil then
-        self.currentClass[eventName](self.currentClass, unpack(arg))
+        self.currentClass[eventName](self.currentClass, ...)
         --Call with self and the arguments
     end
 end
 
 function RoomManager:changeRoom(newRoom)
-    newRoom:load()
     self.currentClass = newRoom
+    self:dispatchEvent("load")
 end

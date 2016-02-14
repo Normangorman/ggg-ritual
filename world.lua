@@ -69,11 +69,9 @@ function World:load()
 
     player = Player.new()
     elder = Elder.new()
-    sideBar = SideBar.new()
 
     --Delete later
     healthBar = HealthBar.new()
-    mainMenu = MainMenu.new()
 
     self.map = sti.new("Assets/_Map/MAP.lua")
     self.camera_x = math.floor(player.x - love.graphics.getWidth() / 2)
@@ -139,8 +137,16 @@ function World:draw(dt)
         end
     end
 
+    love.graphics.origin()
+
     for i=1, #GUI.objects do
         GUI.objects[i]:draw()
+    end
+end
+
+function World:keypressed(key, scancode, isrepeat)
+    if key == "space" then
+        player:attack()
     end
 end
 
@@ -196,10 +202,6 @@ function World:update(dt)
         idle = false
     else
         player.vy = 0
-    end
-
-    if love.keyboard.isDown("d") then
-        gamePlay:death()
     end
 
     if love.keyboard.isDown(" ") then

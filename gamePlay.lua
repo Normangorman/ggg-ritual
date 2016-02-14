@@ -2,7 +2,7 @@ GamePlay = {}
 GamePlay.__index = GamePlay
 
 GamePlay.tasksByDay = {{
-        {"Enter the Forest", {
+        --[[{"Enter the Forest", {
             {123, 28},
             {123, 29},
             {123, 30},
@@ -24,12 +24,13 @@ GamePlay.tasksByDay = {{
            {32, 23},
            {33, 23},
            {34, 23}
-        }},
+        }},--]]
         {"Return to your Elder", {
-          {149, 18},
-          {150, 18}
-        }}
-    },
+          {151, 18},
+          {151, 19},
+          {150, 19},
+      }}
+    }--[[,
     {
         {"Find the bandits at the lakeside", 0, 0},
         -- collide bandit --
@@ -57,10 +58,8 @@ GamePlay.tasksByDay = {{
             {149, 18},
             {150, 18}
         }}
-    }
+    }]]
 }
-
-local cutSceneImgsNum = 3
 
 
 function GamePlay.new()
@@ -72,12 +71,6 @@ function GamePlay.new()
     gamePlay.day = 1
     gamePlay.lose = false
     --gamePlay.numberOfTasks = #GamePlay.tasksByDay[self.day]
-
-    gamePlay.cutSceneImgs = {}
-
-    for i=1,cutSceneImgsNum do
-        table.insert(gamePlay.cutSceneImgs, love.graphics.newImage("Assets/_UI/cutscene_" .. i ..".png"))
-    end
 
     return gamePlay
 end
@@ -96,25 +89,21 @@ function GamePlay:getTilesForTask(taskI)
     return GamePlay.tasksByDay[self.day][taskI][2]
 end
 
+require "loseScreen"
+local loseScreen = LoseScreen.new()
+
 function GamePlay:death()
-    gamePlay.lose = true
-    Timer.new(0.25, function()
-        mainMenu.currCutSceneImg = self.cutSceneImgs[1]
-        Timer.new(0.5, function()
-            mainMenu.currCutSceneImg = self.cutSceneImgs[2]
-            Timer.new(0.5, function()
-                mainMenu.currCutSceneImg = self.cutSceneImgs[3]
-                Timer.new(0.5, function()
-                    love.event.quit()
-                end)
-            end)
-        end)
+    roomManager:changeRoom(loseScreen)
+    Timer.new(1, function ()
+        love.event.quit()
     end)
 end
 
+require "endingScene"
+local endingScene = EndingScene.new()
+
 function GamePlay:win()
-    onMenu = true
-    mainMenu.endingScene = true
+    roomManager:changeRoom(endingScene)
 end
 
 function GamePlay:completeDay()

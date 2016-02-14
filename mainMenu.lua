@@ -15,10 +15,10 @@ local renderGame = false
 local buttonActions = {
     function (menu)
         love.audio.play(menu.selectStartSound)
-        menu:startTimer(0.75, function ()
+        Timer.new(0.75, function ()
             menu.isButtonPressed = false
-            menu:startTimer(1, function ()
-                world:load()
+            Timer.new(1, function ()
+                roomManager:changeRoom(world)
             end)
         end)
     end,

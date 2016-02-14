@@ -22,6 +22,8 @@ require "timer"
 require "common"
 require "world"
 require "roomManager"
+require "cutScene"
+
 
 ENTITY_SPEED_MULTIPLIER = 12 -- multiplied by an entity's speed_stat to get it's real speed in pixels
 SCREEN_WIDTH = 790
@@ -35,24 +37,24 @@ end
 onMenu = true
 player = nil
 elder = nil
-sideBar = nil
-mainMenu = {}
 healthBar = {}
 
 world = World.new()
 roomManager = RoomManager.new()
+mainMenu = MainMenu.new()
 
 GUI = {}
 GUI.objects = {}
 soundManager = SoundManager.new()
 gamePlay = GamePlay.new()
 
+sideBar = SideBar.new()
+
 function love.load()
     if DEBUG then
-        world:load()
+        roomManager:changeRoom(world)
     else
-        onMenu = true
-        mainMenu = MainMenu.new()
+        roomManager:changeRoom(mainMenu)
     end
 end
 
@@ -62,51 +64,26 @@ end
 
 function love.update(dt)
     Timer.updateAll(dt)
-    if onMenu then
-        mainMenu:update(dt)
-        return
-    end
-
-    world:update(dt)
     roomManager:dispatchEvent("update", dt)
 end
 
 function love.draw(dt)
-    if onMenu then
-        mainMenu:draw(dt)
-        return;
-    elseif gamePlay.lose then
-	Font = love.graphics.newFont(40)
-	love.graphics.setColor(255, 0, 0, 122)
-	love.graphics.setFont(Font)
-	love.graphics.print("Game Over", 250, 200)
-	return
-    end
-    world:draw(dt)
     roomManager:dispatchEvent("draw", dt)
 end
 
 function love.keypressed(key, scancode, isrepeat)
-    if not onMenu then
-        if key == "space" then
-            player:attack()
-        end
+    if love.keyboard.isDown("d") then
+        debug.debug()
     end
     roomManager:dispatchEvent("keypressed", key, scancode, isrepeat)
 end
 
 function love.mousepressed(x, y, button, istouch)
-    if onMenu then
-        mainMenu:mousepressed(x, y, button, istouch)
-    end
     roomManager:dispatchEvent("mousepressed", x, y, button, istouch)
 end
 
 function love.mousereleased(x, y, button, istouch)
-    if onMenu then
-        mainMenu:mousereleased(x, y, button, istouch)
-    end
-    roomManager:dispatchEvent("mousepressed", x, y, button, istouch)
+    roomManager:dispatchEvent("mousereleased", x, y, button, istouch)
 end
 
 function is_tile_collidable(tx,ty)
