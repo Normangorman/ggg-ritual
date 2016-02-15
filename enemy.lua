@@ -34,16 +34,22 @@ function Enemy.new()
     e.sounds["hurt"] = nil
     e.sounds["dying"] = nil
 
-    e.frames_waiting = -1  -- used for waiting to perform actions
+    e.frames_waiting = -1 -- used for waiting to perform actions
 
     return e
+end
+
+function Enemy:load()
+    for _,animation in pairs(self.animations) do
+        animation.loop = false
+    end
 end
 
 function Enemy:update(dt)
     self.vx = 0
     self.vy = 0
 
-    --self:update_AI()
+    self:update_AI()
 
     if self.current_animation then
         self.current_animation:update(dt)
@@ -73,7 +79,7 @@ function Enemy:draw()
         self.current_animation:draw(self.x, self.y)
     else
         if DEBUG then
-            --print("No sprite found for enemy! Drawing rectangle instead.")
+            -- print("No sprite found for enemy! Drawing rectangle instead.")
         end
         love.graphics.rectangle("fill", self.x, self.y, 10, 10)
     end
@@ -87,84 +93,86 @@ function Enemy:update_AI()
     dist_to_player = math.sqrt(math.pow(dx, 2) + math.pow(dy, 2))
 
     if self.ai_state == "idle" then
-         -- check if player is within range
-	 if dist_to_player <= self:get_pursuit_range() then
-		 self:set_ai("chasing")
-	 end
+        -- check if player is within range
+        if dist_to_player <= self:get_pursuit_range() then
+            self:set_ai("chasing")
+        end
     elseif self.ai_state == "chasing" then
-	 self:pursue_player()
-	 if not self.sounds["walking"]:isPlaying() then
-	     self.sounds["walking"]:play()
-         end
-	 -- check if nearby player, set state to 'nearby' if so
-	 if dist_to_player <= self:get_nearby_range() then
-		 self.sounds["walking"]:stop()
-		 self:set_ai("nearby")
-	 -- check if far from player, set state to 'idle' if so		 
-	 elseif dist_to_player > self:get_pursuit_range() then
-		 self.sounds["walking"]:stop()
-		 self:set_ai("idle")
-	 end
+        self:pursue_player()
+        if not self.sounds["walking"]:isPlaying() then
+            self.sounds["walking"]:play()
+        end
+        -- check if nearby player, set state to 'nearby' if so
+        if dist_to_player <= self:get_nearby_range() then
+            self.sounds["walking"]:stop()
+            self:set_ai("nearby")
+            -- check if far from player, set state to 'idle' if so
+        elseif dist_to_player > self:get_pursuit_range() then
+            self.sounds["walking"]:stop()
+            self:set_ai("idle")
+        end
     elseif self.ai_state == "nearby" then
-	 -- wait for certain number of frames, if this is achieved then attack
-         if self.frames_waiting == 0 then
-		 self:set_ai("hitting")
-	 -- if player hits enemy now, will go to 'hurt' (ADD COLLISION DETECTION)
-         elseif player.attacking then
-		 succ_hit = false
-		 dx = player.x - self.x
-		 dy = player.y - self.y
-		 angle = math.atan2(dy, dx)
-	 	 if -math.pi/4 <= angle < math.pi/4 then
-			 succ_hit = (player.direction == "left")
-		 elseif math.pi/4 <= angle < 3*math.pi/4 then
-			 succ_hit = (player.direction == "down")
-		 elseif (3*math.pi/4 <= angle < math.pi) or (-math.pi <= angle < -3*math.pi/4) then
-			 succ_hit = (player.direction == "right")
-		 elseif -3*math.pi/4 <= angle < -math.pi/4 then
-			 succ_hit = (player.direction == "up")
-		 end
-		 if succ_hit then
-		     self.hp_stat = self.hp_stat - 1
-	 	     if self.hp_stat <= 0 then
-		         self:set_ai("dying")
-	             else
-		         self:set_ai("hurt")
-		     end
-	         end
-	 -- if player moves certain dist away from enemy, then becomes 'chasing'		 
-         elseif dist_to_player > self:get_nearby_range() then
-		 self:set_ai("chasing")
-	 end
+        -- wait for certain number of frames, if this is achieved then attack
+        if self.frames_waiting == 0 then
+            self:set_ai("hitting")
+            -- if player hits enemy now, will go to 'hurt' (ADD COLLISION DETECTION)
+        elseif player.attacking then
+            succ_hit = false
+            dx = player.x - self.x
+            dy = player.y - self.y
+            angle = math.atan2(dy, dx)
+            if - math.pi / 4 <= angle and angle < math.pi / 4 then
+                succ_hit = (player.direction == "left")
+            elseif math.pi / 4 <= angle and angle < 3 * math.pi / 4 then
+                succ_hit = (player.direction == "down")
+            elseif (3 * math.pi / 4 <= angle and angle < math.pi) or
+                (-math.pi <= angle and angle < -3 * math.pi / 4) then
+                succ_hit = (player.direction == "right")
+            elseif - 3 * math.pi / 4 <= angle and angle < -math.pi / 4 then
+                succ_hit = (player.direction == "up")
+            end
+            if succ_hit then
+                self.hp_stat = self.hp_stat - 1
+                if self.hp_stat <= 0 then
+                    self:set_ai("dying")
+                else
+                    self:set_ai("hurt")
+                end
+            end
+            -- if player moves certain dist away from enemy, then becomes 'chasing'
+        elseif dist_to_player > self:get_nearby_range() then
+            self:set_ai("chasing")
+        end
     elseif self.ai_state == "hitting" then
-	 if not self.sounds["hitting"]:isPlaying() then
-		 self.sounds["hitting"]:play()
-	 end
-	 -- if animation has finished
-	 if not self.current_animation.playing then
-		 player.health = player.health - self.damage_stat
-	 	 if player.health <= 0 then
-		     player.dead = true
-		 end
-		 self:set_ai("nearby")
-	 end
-         -- if player is colliding with enemy, will set them to hurt state
+        if not self.sounds["hitting"]:isPlaying() then
+            self.sounds["hitting"]:play()
+        end
+        -- if animation has finished
+        --if not self.current_animation.playing then
+            player.health = player.health - self.damage_stat
+            if player.health <= 0 then
+                player.dead = true
+            end
+            self:set_ai("nearby")
+        --end
+        -- if player is colliding with enemy, will set them to hurt state
     elseif self.ai_state == "hurt" then
-	 -- wait for hurt animation to finish, then restore ai stat
-	 if not self.sounds["hurt"]:isPlaying() then
-		 self.sounds["hurt"]:play()
-	 end
-	 if not self.current_animation.playing then
-		 self:set_ai("idle")
-	 end
+        print("Hurt state")
+        -- wait for hurt animation to finish, then restore ai stat
+        if not self.sounds["hurt"]:isPlaying() then
+            self.sounds["hurt"]:play()
+        end
+        if not self.current_animation.playing then
+            self:set_ai("idle")
+        end
     elseif self.ai_state == "dying" then
-	 -- wait for dying animation to finish, then destroy self
-	 if not self.sounds["dying"]:isPlaying() then
-		 self.sounds["dying"]:play()
-	 end
-	 if not self.current_animation.playing then
-		 self._dead = true
-	 end
+        -- wait for dying animation to finish, then destroy self
+        if not self.sounds["dying"]:isPlaying() then
+            self.sounds["dying"]:play()
+        end
+        if not self.current_animation.playing then
+            self._dead = true
+        end
     end
 end
 
@@ -178,8 +186,8 @@ function Enemy:set_ai(state)
     elseif state == "chasing" then
         self.current_animation = self.animations.chasing
     elseif state == "nearby" then
-	    self.frames_waiting = 30  -- wait for 30 frames to hit player
-	    self.current_animation = self.animations.nearby
+        self.frames_waiting = 30 -- wait for 30 frames to hit player
+        self.current_animation = self.animations.nearby
     elseif state == "hitting" then
         self.current_animation = self.animations.hitting
     elseif state == "hurt" then
@@ -202,7 +210,7 @@ end
 
 function Enemy:pursue_player()
     -- Calculate direction to move
-    
+
     dx = player.x - self.x
     dy = player.y - self.y
 
@@ -216,10 +224,11 @@ function Enemy:pursue_player()
 end
 
 function Enemy:take_damage(strength_stat)
+    print("Take damage func")
     self.hp_stat = self.hp_stat - strength_stat
     if self.sounds.hurt then
         love.audio.play(self.sounds.hurt)
     end
 
-    print("Enemy took "..strength_stat.." damage. Current HP: "..self.hp_stat)
+    print("Enemy took " .. strength_stat .. " damage. Current HP: " .. self.hp_stat)
 end

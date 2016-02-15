@@ -26,6 +26,10 @@ function World.new()
         },
         {
             ForestDemon.new,
+            {151,18}
+        },
+        {
+            ForestDemon.new,
             {102,51}
         },
         {
@@ -50,6 +54,9 @@ function World:add_game_object(g)
     g._id = self.next_object_id
     self.next_object_id = self.next_object_id + 1
     table.insert(self.objects, g)
+    if g.load ~= nil then
+        g:load()
+    end
 end
 
 function World:remove_game_object(id)

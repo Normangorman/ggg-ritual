@@ -15,7 +15,7 @@ function Player.new()
     p.vy = 0
     p.inventory = nil
 
-    p.health = 10
+    p.health = 9
     p.strength = 10
     p.speed_stat = 20
 
